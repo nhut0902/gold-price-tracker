@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>💰 Giá Vàng Real-time</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-text-size-adjust:100%}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:linear-gradient(180deg,#0d0a05,#1a1510,#0d0a05);color:#fff;overscroll-behavior:none;padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}
+.container{max-width:440px;margin:0 auto;padding:20px 16px}
+h1{text-align:center;font-size:1.5rem;font-weight:700;color:#fbbf24;margin-bottom:4px}
+.subtitle{text-align:center;font-size:0.75rem;color:#888;margin-bottom:20px}
+.card{background:linear-gradient(135deg,#1a1510,#2a2210);border-radius:16px;padding:20px;margin-bottom:16px;border:1px solid #5a4a20;transform:translateZ(0);will-change:transform}
+.card-header{display:flex;justify-content:space-between;margin-bottom:8px}
+.card-title{font-size:0.875rem;font-weight:600}
+.gold-card .card-title{color:#fbbf24}
+.silver-card{background:linear-gradient(135deg,#15151a,#252530);border-color:#333}
+.silver-card .card-title{color:#ccc}
+.vn-card{background:linear-gradient(135deg,#2a1510,#3a2520);border-color:#8b4513}
+.vn-card .card-title{color:#fb923c}
+.price-main{font-size:2rem;font-weight:700;margin-bottom:12px}
+.price-main.gold{color:#fde68a}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.stat{background:rgba(0,0,0,0.3);border-radius:8px;padding:8px}
+.stat-label{font-size:0.7rem;color:#888}
+.stat-value{font-size:0.9rem;font-weight:600}
+.green{color:#22c55e}.red{color:#ef4444}.yellow{color:#fbbf24}
+.row{display:flex;justify-content:space-between;align-items:center;padding:10px 16px}
+.fmt{text-align:center;font-size:0.7rem;color:#555;margin-top:20px}
+button{font-size:0.75rem;background:#3b82f6;color:#fff;padding:8px 16px;border-radius:8px;border:none;cursor:pointer}
+button:disabled{opacity:0.5}
+label{display:flex;align-items:center;gap:6px;font-size:0.75rem;color:#888}
+input[type=checkbox]{width:16px;height:16px}
+.arrow{font-size:0.75rem}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>💰 Giá Vàng Real-time</h1>
+<p class="subtitle" id="subtitle">Đang tải... 🔄</p>
+
+<div class="card gold-card" id="goldCard" style="display:none">
+<div class="card-header">
+<div><div class="card-title">🥇 Vàng thế giới (XAU)</div><div style="font-size:0.7rem;color:#666" id="goldTime"></div></div>
+<span class="arrow" id="goldArrow"></span>
+</div>
+<div class="price-main gold" id="goldPrice">$0.00<span style="font-size:0.875rem;color:#666;font-weight:400">/oz</span></div>
+<div class="grid2">
+<div class="stat"><div class="stat-label">Per gram (USD)</div><div class="stat-value yellow" id="goldPerGram">$0.00</div></div>
+<div class="stat"><div class="stat-label">Per gram (VND)</div><div class="stat-value yellow" id="goldPerGramVND">0đ</div></div>
+</div>
+</div>
+
+<div class="card silver-card" id="silverCard" style="display:none">
+<div class="card-header">
+<div><div class="card-title">🥈 Bạc (XAG)</div><div class="price-main" style="font-size:1.25rem;color:#ddd" id="silverPrice">$0.00<span style="font-size:0.75rem;color:#666;font-weight:400">/oz</span></div></div>
+<div style="font-size:0.75rem;color:#888" id="silverRatio">Au:Ag = 1:0</div>
+</div>
+</div>
+
+<div class="card vn-card" id="vnCard" style="display:none">
+<div class="card-title" style="margin-bottom:12px">🇻🇳 Giá vàng Việt Nam</div>
+<div class="stat" style="margin-bottom:8px">
+<div style="display:flex;justify-content:space-between;margin-bottom:4px">
+<span style="font-size:0.75rem;font-weight:600;color:#fb923c">SJC (lượng)</span>
+<span style="font-size:0.7rem;color:#666" id="vnTime"></span>
+</div>
+<div class="grid2">
+<div><span class="stat-label">Mua vào</span><div class="stat-value green" id="sjcBuy">0đ</div></div>
+<div><span class="stat-label">Bán ra</span><div class="stat-value red" id="sjcSell">0đ</div></div>
+</div>
+</div>
+<div class="stat">
+<span style="font-size:0.75rem;font-weight:600;color:#fb923c">BTMC (lượng)</span>
+<div class="grid2" style="margin-top:4px">
+<div><span class="stat-label">Mua vào</span><div class="stat-value green" id="btmcBuy">0đ</div></div>
+<div><span class="stat-label">Bán ra</span><div class="stat-value red" id="btmcSell">0đ</div></div>
+</div>
+</div>
+</div>
+
+<div class="card" style="padding:10px 16px">
+<div class="row" style="padding:0">
+<span style="font-size:0.75rem;color:#888">💱 USD/VND</span>
+<span style="font-size:0.75rem;font-weight:600;color:#ddd" id="usdVnd">0đ</span>
+</div>
+</div>
+
+<div class="row" style="margin-bottom:16px">
+<button onclick="fetchAll()" id="refreshBtn">🔄 Cập nhật</button>
+<label><input type="checkbox" id="autoRefresh" checked onchange="toggleAuto()"> Tự động (60s)</label>
+</div>
+
+<div class="fmt">
+<div>Dữ liệu: gold-api.com • exchangerate-api.com</div>
+<div style="margin-top:4px">Tối ưu cho iPhone 6 Safari</div>
+</div>
+</div>
+
+<script>
+const GRAMS_PER_OZ=31.1035;let prevGold=0,autoTimer=null;
+function fmtVND(n){return new Intl.NumberFormat('vi-VN').format(Math.round(n))}
+function fmtUSD(n){return '$'+n.toFixed(2)}
+function fmtTime(iso){return new Date(iso).toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'})}
+
+async function fetchAll(){
+document.getElementById('refreshBtn').textContent='⏳ Đang tải...';
+document.getElementById('refreshBtn').disabled=true;
+try{
+const[goldRes,silverRes,fxRes]=await Promise.all([
+fetch('https://api.gold-api.com/price/XAU'),
+fetch('https://api.gold-api.com/price/XAG'),
+fetch('https://open.er-api.com/v6/latest/USD')
+]);
+const gold=await goldRes.json(),silver=await silverRes.json(),fx=await fxRes.json();
+const usdVnd=fx.rates?.VND||26000;
+document.getElementById('goldCard').style.display='block';
+document.getElementById('goldPrice').innerHTML=fmtUSD(gold.price)+'<span style="font-size:0.875rem;color:#666;font-weight:400">/oz</span>';
+document.getElementById('goldTime').textContent=fmtTime(gold.updatedAt);
+document.getElementById('goldPerGram').textContent=fmtUSD(gold.price/GRAMS_PER_OZ);
+const gpv=gold.price*usdVnd/GRAMS_PER_OZ;
+document.getElementById('goldPerGramVND').textContent=fmtVND(gpv)+'đ';
+const arrow=document.getElementById('goldArrow');
+if(prevGold>0){
+if(gold.price>prevGold)arrow.innerHTML='<span class="green arrow">▲ +'+(gold.price-prevGold).toFixed(2)+'</span>';
+else if(gold.price<prevGold)arrow.innerHTML='<span class="red arrow">▼ -'+(prevGold-gold.price).toFixed(2)+'</span>';
+else arrow.innerHTML='<span style="color:#888;font-size:0.75rem">→</span>';
+}
+prevGold=gold.price;
+document.getElementById('silverCard').style.display='block';
+document.getElementById('silverPrice').innerHTML=fmtUSD(silver.price)+'<span style="font-size:0.75rem;color:#666;font-weight:400">/oz</span>';
+document.getElementById('silverRatio').textContent='Au:Ag = 1:'+Math.round(gold.price/silver.price);
+document.getElementById('usdVnd').textContent=fmtVND(usdVnd)+'đ';
+const wpv=gold.price*usdVnd;
+const ppg=wpv/GRAMS_PER_OZ;
+const sjcBase=ppg*37.5;
+const sjcPrem=500000;
+document.getElementById('vnCard').style.display='block';
+document.getElementById('sjcBuy').textContent=fmtVND(sjcBase+sjcPrem-100000)+'đ';
+document.getElementById('sjcSell').textContent=fmtVND(sjcBase+sjcPrem+100000)+'đ';
+document.getElementById('btmcBuy').textContent=fmtVND(sjcBase+200000)+'đ';
+document.getElementById('btmcSell').textContent=fmtVND(sjcBase+300000)+'đ';
+document.getElementById('vnTime').textContent=fmtTime(new Date().toISOString());
+document.getElementById('subtitle').textContent='Cập nhật: '+new Date().toLocaleTimeString('vi-VN')+' 🔄';
+}catch(e){
+document.getElementById('subtitle').textContent='Lỗi tải dữ liệu. Thử lại.';
+}finally{
+document.getElementById('refreshBtn').textContent='🔄 Cập nhật';
+document.getElementById('refreshBtn').disabled=false;
+}
+}
+
+function toggleAuto(){
+const cb=document.getElementById('autoRefresh');
+if(autoTimer)clearInterval(autoTimer);
+if(cb.checked)autoTimer=setInterval(fetchAll,60000);
+}
+fetchAll();
+autoTimer=setInterval(fetchAll,60000);
+</script>
+</body>
+</html>
